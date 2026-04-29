@@ -7,12 +7,29 @@ interface ImageItemProps {
 
 function ImageItem({ image, isFeatured }: ImageItemProps) {
   return (
-    <div style={{ border: isFeatured ? '3px solid gold' : '1px solid gray' }}>
+    <div
+      className={`
+        relative overflow-hidden rounded-2xl cursor-pointer
+        transition-transform duration-200 hover:scale-105
+      `}
+    >
       <img
         src={image.url}
         alt={image.alt}
-        style={{ width: '100%', display: 'block' }}
+        className="w-full h-full object-cover"
       />
+      {isFeatured && (
+        <>
+          <div className="absolute top-4 right-4 text-white text-2xl drop-shadow-lg">
+            🤍
+          </div>
+          <div className="absolute bottom-4 left-4">
+            <span className="text-white text-sm font-semibold drop-shadow-lg">
+              Favoritos
+            </span>
+          </div>
+        </>
+      )}
     </div>
   )
 }

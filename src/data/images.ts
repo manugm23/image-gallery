@@ -9,4 +9,6 @@ export const INITIAL_IMAGES: Image[] = [
   { id: '6', url: 'https://picsum.photos/id/60/600/400', alt: 'Océano al atardecer' },
   { id: '7', url: 'https://picsum.photos/id/70/600/400', alt: 'Ciudad de noche' },
   { id: '8', url: 'https://picsum.photos/id/80/600/400', alt: 'Campo de flores' },
+  { id: '9', url: 'https://picsum.photos/id/90/600/400', alt: 'Río entre montañas' },
+  { id: '10', url: 'https://picsum.photos/id/100/600/400', alt: 'Camino en el bosque' },
 ]

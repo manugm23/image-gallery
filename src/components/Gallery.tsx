@@ -3,17 +3,34 @@ import { INITIAL_IMAGES } from '../data/images'
 import ImageItem from './ImageItem'
 
 function Gallery() {
-  const [images, _setImages] = useState(INITIAL_IMAGES)
+  const images = useState(INITIAL_IMAGES)[0]
+
+  const featured = images[0]
+  const rest = images.slice(1)
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', padding: '24px' }}>
-      {images.map((image, index) => (
-        <ImageItem
-          key={image.id}
-          image={image}
-          isFeatured={index === 0}
-        />
-      ))}
+    <div className="min-h-screen bg-black py-10 px-4">
+      <div className="max-w-2xl mx-auto flex flex-col gap-3">
+
+        {featured && (
+          <div className="flex justify-center">
+            <div className="w-2/3">
+              <ImageItem image={featured} isFeatured={true} />
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-3 gap-3">
+          {rest.map((image) => (
+            <ImageItem
+              key={image.id}
+              image={image}
+              isFeatured={false}
+            />
+          ))}
+        </div>
+
+      </div>
     </div>
   )
 }
