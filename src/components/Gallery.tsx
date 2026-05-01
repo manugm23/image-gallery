@@ -3,7 +3,13 @@ import { INITIAL_IMAGES } from '../data/images'
 import ImageItem from './ImageItem'
 
 function Gallery() {
-  const images = useState(INITIAL_IMAGES)[0]
+  const [images, setImages] = useState(INITIAL_IMAGES)
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('¿Delete this image?')) {
+      setImages(images.filter(img => img.id !== id))
+    }
+  }
 
   const featured = images[0]
   const rest = images.slice(1)
@@ -15,7 +21,11 @@ function Gallery() {
         {featured && (
           <div className="flex justify-center">
             <div className="w-2/3">
-              <ImageItem image={featured} isFeatured={true} />
+              <ImageItem
+                image={featured}
+                isFeatured={true}
+                onDelete={handleDelete}
+              />
             </div>
           </div>
         )}
@@ -26,6 +36,7 @@ function Gallery() {
               key={image.id}
               image={image}
               isFeatured={false}
+              onDelete={handleDelete}
             />
           ))}
         </div>
