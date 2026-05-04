@@ -5,10 +5,11 @@ import { CSS } from '@dnd-kit/utilities'
 interface ImageItemProps {
   image: Image
   isFeatured?: boolean
-  onDelete: (id: string) => void
+  isSelected?: boolean
+  onToggleSelect: (id: string) => void
 }
 
-function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
+function ImageItem({ image, isFeatured, isSelected, onToggleSelect }: ImageItemProps) {
   const {
     attributes,
     listeners,
@@ -23,9 +24,9 @@ function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
     transition,
   }
 
-  const handleDeleteClick = (e: React.MouseEvent) => {
+  const handleSelectClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onDelete(image.id)
+    onToggleSelect(image.id)
   }
 
   return (
@@ -35,9 +36,11 @@ function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
       {...attributes}
       {...listeners}
       className={`
-        group relative overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing
-        transition-transform duration-200 hover:scale-105
-        ${isDragging ? 'opacity-50 scale-105 z-50' : ''}
+        group relative overflow-hidden rounded-2xl
+        cursor-grab active:cursor-grabbing
+        transition-all duration-200
+        ${isDragging ? 'opacity-50 z-50' : 'hover:scale-105'}
+        ${isSelected ? 'ring-4 ring-white-500 outline outline-2 outline-white outline-offset-0' : ''}
       `}
     >
       <img
@@ -46,20 +49,27 @@ function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
         className="w-full h-full object-cover"
       />
 
+      {isSelected && (
+        <div className="absolute inset-0 bg-white-500/20" />
+      )}
+
       <button
-        onClick={handleDeleteClick}
-        aria-label={`Delete image ${image.alt}`}
-        className="
+        onClick={handleSelectClick}
+        aria-label={`Select image ${image.alt}`}
+        className={`
           absolute top-2 left-2
-          bg-white-500 hover:bg-white-600
-          text-white text-xs font-bold
-          w-6 h-6 rounded-full
+          w-5 h-5 rounded-full border-2 border-white
           flex items-center justify-center
-          opacity-0 group-hover:opacity-100
-          transition-opacity duration-200
-        "
+          transition-all duration-200
+          ${isSelected
+            ? 'bg-white-500 opacity-100'
+            : 'bg-black/30 opacity-0 group-hover:opacity-100'
+          }
+        `}
       >
-        ✕
+        {isSelected && (
+          <span className="text-white text-xs font-bold">✓</span>
+        )}
       </button>
 
       {isFeatured && (

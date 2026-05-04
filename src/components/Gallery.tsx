@@ -17,6 +17,7 @@ import ImageItem from './ImageItem'
 
 function Gallery() {
   const [images, setImages] = useState(INITIAL_IMAGES)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -26,9 +27,22 @@ function Gallery() {
     })
   )
 
-  const handleDelete = (id: string) => {
-    if (window.confirm('¿Delete this image?')) {
-      setImages(images.filter(img => img.id !== id))
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const handleDeleteSelected = () => {
+    if (window.confirm(`Delete ${selectedIds.size} ${selectedIds.size === 1 ? 'image' : 'images'}?`)) {
+      setImages(images.filter(img => !selectedIds.has(img.id)))
+      setSelectedIds(new Set())
     }
   }
 
@@ -50,6 +64,20 @@ function Gallery() {
     <div className="min-h-screen bg-black py-10 px-4">
       <div className="max-w-2xl mx-auto flex flex-col gap-3">
 
+        {selectedIds.size > 0 && (
+          <div className="flex items-center justify-between bg-zinc-900 rounded-xl px-4 py-3">
+            <span className="text-white text-sm">
+              {selectedIds.size} {selectedIds.size === 1 ? 'image' : 'images'} selected
+            </span>
+            <button
+              onClick={handleDeleteSelected}
+              className="bg-white-500 hover:bg-white-600 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors duration-200"
+            >
+              Delete selected
+            </button>
+          </div>
+        )}
+
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -59,14 +87,14 @@ function Gallery() {
             items={images.map(img => img.id)}
             strategy={rectSortingStrategy}
           >
-
             {featured && (
               <div className="flex justify-center">
                 <div className="w-2/3">
                   <ImageItem
                     image={featured}
                     isFeatured={true}
-                    onDelete={handleDelete}
+                    isSelected={selectedIds.has(featured.id)}
+                    onToggleSelect={handleToggleSelect}
                   />
                 </div>
               </div>
@@ -78,7 +106,8 @@ function Gallery() {
                   key={image.id}
                   image={image}
                   isFeatured={false}
-                  onDelete={handleDelete}
+                  isSelected={selectedIds.has(image.id)}
+                  onToggleSelect={handleToggleSelect}
                 />
               ))}
             </div>
