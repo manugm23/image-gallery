@@ -1,19 +1,45 @@
-import type { Image } from "../types/image";
+import type { Image } from '../types/image'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 interface ImageItemProps {
-  image: Image;
-  isFeatured?: boolean;
-  onDelete: (id: string) => void;
+  image: Image
+  isFeatured?: boolean
+  onDelete: (id: string) => void
 }
 
 function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: image.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
   const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onDelete(image.id);
-  };
+    e.stopPropagation()
+    onDelete(image.id)
+  }
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl cursor-pointer transition-transform duration-200 hover:scale-105">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`
+        group relative overflow-hidden rounded-2xl cursor-grab active:cursor-grabbing
+        transition-transform duration-200 hover:scale-105
+        ${isDragging ? 'opacity-50 scale-105 z-50' : ''}
+      `}
+    >
       <img
         src={image.url}
         alt={image.alt}
@@ -49,7 +75,7 @@ function ImageItem({ image, isFeatured, onDelete }: ImageItemProps) {
         </>
       )}
     </div>
-  );
+  )
 }
 
-export default ImageItem;
+export default ImageItem
